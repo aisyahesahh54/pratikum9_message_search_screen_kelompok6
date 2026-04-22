@@ -1,5 +1,21 @@
 import 'package:flutter/material.dart';
 
+// IMPORT SEMUA SCREEN
+import 'screen/ChatsScreen.dart';
+import 'screen/ContactsScreen.dart';
+import 'screen/CallHistoryScreen.dart';
+import 'screen/ProfileScreen.dart';
+import 'screen/AudioCalling.dart';
+import 'screen/CallsSearchScreen.dart';
+import 'screen/ContactSearchScreen.dart';
+import 'screen/VideoVoiceCalling.dart';
+import 'screen/MessageSearchScreen.dart';
+import 'screen/EditProfileScreen.dart';
+import 'screen/MessageScreen.dart';
+
+
+
+
 void main() {
   runApp(const MyApp());
 }
@@ -10,59 +26,73 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      debugShowCheckedModeBanner: false,
+      title: 'Chat App UI',
       theme: ThemeData(
+        primaryColor: const Color(0xFF00BF6D),
         colorScheme: ColorScheme.fromSeed(
-          seedColor: Colors.deepPurple,
+          seedColor: const Color(0xFF00BF6D),
         ),
         useMaterial3: true,
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: const MainPage(),
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-
-  final String title;
+class MainPage extends StatefulWidget {
+  const MainPage({super.key});
 
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  State<MainPage> createState() => _MainPageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
+class _MainPageState extends State<MainPage> {
+  int _selectedIndex = 0;
 
-  void _incrementCounter() {
+  // LIST SCREEN
+  final List<Widget> _screens = const [
+    ChatsScreen(),
+    ContactsScreen(),
+    CallHistoryScreen(),
+    ProfileScreen(),
+  ];
+
+  void _onItemTapped(int index) {
     setState(() {
-      _counter++;
+      _selectedIndex = index;
     });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text(widget.title),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center, // FIX DI SINI
-          children: [
-            const Text('You have pushed the button this many times:'),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
-          ],
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
+      body: _screens[_selectedIndex],
+
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _selectedIndex,
+        selectedItemColor: const Color(0xFF00BF6D),
+        unselectedItemColor: Colors.grey,
+        onTap: _onItemTapped,
+        type: BottomNavigationBarType.fixed,
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.chat),
+            label: "Chats",
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.people),
+            label: "Contacts",
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.call),
+            label: "Calls",
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person),
+            label: "Profile",
+          ),
+        ],
       ),
     );
   }
