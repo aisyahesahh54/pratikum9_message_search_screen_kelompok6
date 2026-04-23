@@ -56,6 +56,14 @@ class _MainPageState extends State<MainPage> {
     ContactsScreen(),
     CallHistoryScreen(),
     ProfileScreen(),
+    AudioCallingScreen(),
+    MessageSearchScreen(),
+    CallsSearchScreen (),
+    ContactsScreen(),
+    EditProfileScreen (),
+    MessagesScreen(),
+    VideoCallingScreen(),
+
   ];
 
   void _onItemTapped(int index) {
@@ -91,6 +99,35 @@ class _MainPageState extends State<MainPage> {
           BottomNavigationBarItem(
             icon: Icon(Icons.person),
             label: "Profile",
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.chat),
+            label: "Mesasage",
+            ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.people),
+            label: "ContactSearch",
+             ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.chat),
+            label: "MesageSearch",
+            ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.call),
+            label: "CallsSearch",
+            ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person),
+            label: "editprofile",
+            ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.chat),
+            label: "audioCalling",
+             ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.call),
+            label: "vidiovoicecalling",
+            
           ),
         ],
       ),
