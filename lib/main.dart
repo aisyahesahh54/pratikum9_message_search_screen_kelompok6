@@ -8,7 +8,6 @@ import 'screen/ProfileScreen.dart';
 import 'screen/AudioCalling.dart';
 import 'screen/CallsSearchScreen.dart';
 import 'screen/ContactSearchScreen.dart';
-import 'screen/VideoVoiceCalling.dart';
 import 'screen/MessageSearchScreen.dart';
 import 'screen/EditProfileScreen.dart';
 import 'screen/MessageScreen.dart';
@@ -52,17 +51,17 @@ class _MainPageState extends State<MainPage> {
 
   // LIST SCREEN
   final List<Widget> _screens = const [
-    ChatsScreen(),
+    ChatScreen(),
     ContactsScreen(),
     CallHistoryScreen(),
     ProfileScreen(),
     AudioCallingScreen(),
     MessageSearchScreen(),
-    CallsSearchScreen (),
+    CallSearchScreen (),
     ContactsScreen(),
-    EditProfileScreen (),
-    MessagesScreen(),
-    VideoCallingScreen(),
+    EditProfileScreen(),
+    ProfileScreen (),
+    MessageScreen(),
 
   ];
 
@@ -133,4 +132,16 @@ class _MainPageState extends State<MainPage> {
       ),
     );
   }
+}
+
+class EdiagesScreen {
+  const EdiagesScreen();
+}
+
+class MessdeoCallingScreen {
+  const MessdeoCallingScreen();
+}
+
+class ChatsScreen {
+  const ChatsScreen();
 }
