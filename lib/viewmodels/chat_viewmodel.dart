@@ -3,28 +3,22 @@ import '../models/chat_model.dart';
 import '../services/api_service.dart';
 
 class ChatViewModel extends ChangeNotifier {
-  List<ChatModel> _chats = [];
-  bool _isLoading = false;
+  final ApiService _apiService = ApiService();
 
-  String _title = ""; // 🔥 dari API /check
+  List<ChatModel> chats = [];
+  bool isLoading = false;
 
-  List<ChatModel> get chats => _chats;
-  bool get isLoading => _isLoading;
-  String get title => _title;
-
-  Future<void> loadChats() async {
-    _isLoading = true;
+  Future<void> fetchChats() async {
+    isLoading = true;
     notifyListeners();
 
     try {
-      // 🔥 ambil data dari 2 API
-      _title = await ApiService.fetchTitle(); // /check
-      _chats = await ApiService.fetchChats(); // /chats
+      chats = await _apiService.getChats();
     } catch (e) {
-      debugPrint(e.toString());
+      print(e);
     }
 
-    _isLoading = false;
+    isLoading = false;
     notifyListeners();
   }
 }

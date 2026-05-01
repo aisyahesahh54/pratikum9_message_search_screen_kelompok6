@@ -1,102 +1,193 @@
 import 'package:flutter/material.dart';
 
-class CallSearchScreen extends StatefulWidget {
-  const CallSearchScreen({super.key});
-
-  @override
-  State<CallSearchScreen> createState() => _CallSearchScreenState();
-}
-
-class _CallSearchScreenState extends State<CallSearchScreen> {
-  final TextEditingController _searchController = TextEditingController();
-
-  List<String> contacts = [
-    "Ralph Edwards",
-    "Cody Fisher",
-    "Esther Howard",
-    "Jenny Wilson",
-    "Guy Hawkins",
-    "Jacob Jones",
-    "Wade Warren",
-  ];
-
-  List<String> filteredContacts = [];
-
-  @override
-  void initState() {
-    super.initState();
-    filteredContacts = contacts;
-  }
-
-  void _searchContact(String query) {
-    setState(() {
-      filteredContacts = contacts
-          .where((contact) =>
-              contact.toLowerCase().contains(query.toLowerCase()))
-          .toList();
-    });
-  }
-
-  void _startCall(String name) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text("Calling $name...")),
-    );
-
-    // 👉 Kalau mau pindah ke AudioCallingScreen:
-    // Navigator.push(
-    //   context,
-    //   MaterialPageRoute(
-    //     builder: (context) => const AudioCallingScreen(),
-    //   ),
-    // );
-  }
+class CallsSearchScreen extends StatelessWidget {
+  const CallsSearchScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
-        title: const Text("Search Contact"),
+        centerTitle: false,
+        elevation: 0,
+        backgroundColor: const Color(0xFF00BF6D),
+        foregroundColor: Colors.white,
+        title: const Text("Calls"),
       ),
       body: Column(
         children: [
-          Padding(
-            padding: const EdgeInsets.all(16),
-            child: TextField(
-              controller: _searchController,
-              onChanged: _searchContact,
-              decoration: InputDecoration(
-                hintText: "Search contact...",
-                prefixIcon: const Icon(Icons.search),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
+          // Appbar search
+          Container(
+            margin: const EdgeInsets.only(bottom: 16.0),
+            padding: const EdgeInsets.fromLTRB(
+              16.0,
+              0,
+              16.0,
+              16.0,
+            ),
+            color: const Color(0xFF00BF6D),
+            child: Form(
+              child: TextFormField(
+                autofocus: true,
+                textInputAction: TextInputAction.search,
+                onChanged: (value) {
+                  // search
+                },
+                decoration: InputDecoration(
+                  fillColor: Colors.white,
+                  prefixIcon: Icon(
+                    Icons.search,
+                    color: const Color(0xFF1D1D35).withOpacity(0.64),
+                  ),
+                  hintText: "Search",
+                  hintStyle: TextStyle(
+                    color: const Color(0xFF1D1D35).withOpacity(0.64),
+                  ),
+                  filled: true,
+                  contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 16.0 * 1.5, vertical: 16.0),
+                  border: const OutlineInputBorder(
+                    borderSide: BorderSide.none,
+                    borderRadius: BorderRadius.all(Radius.circular(50)),
+                  ),
                 ),
               ),
             ),
           ),
-
           Expanded(
-            child: filteredContacts.isEmpty
-                ? const Center(child: Text("No contacts found"))
-                : ListView.builder(
-                    itemCount: filteredContacts.length,
-                    itemBuilder: (context, index) {
-                      final name = filteredContacts[index];
-
-                      return ListTile(
-                        leading: CircleAvatar(
-                          child: Text(name[0]),
-                        ),
-                        title: Text(name),
-                        trailing: IconButton(
-                          icon: const Icon(Icons.call),
-                          onPressed: () => _startCall(name),
-                        ),
-                      );
-                    },
+            child: SafeArea(
+              child: ListView(
+                children: [
+                  // For demo
+                  ...List.generate(
+                    demoContactsImage.length,
+                    (index) => CallHistoryCard(
+                      name: "Darlene Robert",
+                      image: demoContactsImage[index],
+                      time: "3m ago",
+                      isActive: index.isEven,
+                      isOutgoingCall: index.isOdd,
+                      isVideoCall: index.isEven,
+                      press: () {},
+                    ),
                   ),
+                ],
+              ),
+            ),
           ),
         ],
       ),
     );
   }
 }
+
+class CallHistoryCard extends StatelessWidget {
+  const CallHistoryCard({
+    super.key,
+    required this.name,
+    required this.time,
+    required this.isActive,
+    required this.isVideoCall,
+    required this.isOutgoingCall,
+    required this.image,
+    required this.press,
+  });
+
+  final String name, time, image;
+  final bool isActive, isVideoCall, isOutgoingCall;
+  final VoidCallback press;
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      contentPadding: const EdgeInsets.symmetric(
+        horizontal: 16.0,
+        vertical: 16.0 / 2,
+      ),
+      onTap: press,
+      leading: CircleAvatarWithActiveIndicator(
+        image: image,
+        isActive: isActive,
+        radius: 28,
+      ),
+      title: Text(name),
+      subtitle: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 16.0 / 2),
+        child: Row(
+          children: [
+            Icon(
+              isOutgoingCall ? Icons.north_east : Icons.south_west,
+              size: 16,
+              color: isOutgoingCall
+                  ? Theme.of(context).primaryColor
+                  : const Color(0xFFF03738),
+            ),
+            const SizedBox(width: 16.0 / 2),
+            Text(
+              time,
+              style: TextStyle(
+                color: Theme.of(context)
+                    .textTheme
+                    .bodyLarge!
+                    .color!
+                    .withOpacity(0.64),
+              ),
+            ),
+          ],
+        ),
+      ),
+      trailing: Icon(
+        isVideoCall ? Icons.videocam : Icons.call,
+        color: Theme.of(context).primaryColor,
+      ),
+    );
+  }
+}
+
+class CircleAvatarWithActiveIndicator extends StatelessWidget {
+  const CircleAvatarWithActiveIndicator({
+    super.key,
+    this.image,
+    this.radius = 24,
+    this.isActive,
+  });
+
+  final String? image;
+  final double? radius;
+  final bool? isActive;
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      children: [
+        CircleAvatar(
+          radius: radius,
+          backgroundImage: NetworkImage(image!),
+        ),
+        if (isActive!)
+          Positioned(
+            right: 0,
+            bottom: 0,
+            child: Container(
+              height: 16,
+              width: 16,
+              decoration: BoxDecoration(
+                color: const Color(0xFF00BF6D),
+                shape: BoxShape.circle,
+                border: Border.all(
+                    color: Theme.of(context).scaffoldBackgroundColor, width: 3),
+              ),
+            ),
+          )
+      ],
+    );
+  }
+}
+
+final List<String> demoContactsImage = [
+  'https://i.postimg.cc/g25VYN7X/user-1.png',
+  'https://i.postimg.cc/cCsYDjvj/user-2.png',
+  'https://i.postimg.cc/sXC5W1s3/user-3.png',
+  'https://i.postimg.cc/4dvVQZxV/user-4.png',
+  'https://i.postimg.cc/FzDSwZcK/user-5.png',
+];

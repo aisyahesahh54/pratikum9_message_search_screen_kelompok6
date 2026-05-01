@@ -14,9 +14,8 @@ class _ChatsScreenState extends State<ChatsScreen> {
   @override
   void initState() {
     super.initState();
-
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<ChatViewModel>().loadChats();
+    Future.microtask(() {
+      Provider.of<ChatViewModel>(context, listen: false).fetchChats();
     });
   }
 
@@ -25,22 +24,16 @@ class _ChatsScreenState extends State<ChatsScreen> {
     final vm = context.watch<ChatViewModel>();
 
     return Scaffold(
-      // 🔥 SUDAH DISELIPKAN DI SINI
       appBar: AppBar(
-        title: Text(
-          vm.title.isNotEmpty
-              ? vm.title // 🔥 dari API /check
-              : "Loading...",
-          style: const TextStyle(fontSize: 16),
-        ),
-        backgroundColor: const Color(0xFF00BF6D),
+        title: const Text("Chats"),
+        backgroundColor: Colors.green,
       ),
 
       body: vm.isLoading
           ? const Center(child: CircularProgressIndicator())
 
           : vm.chats.isEmpty
-              ? const Center(child: Text("Tidak ada data"))
+              ? const Center(child: Text("Tidak ada chat"))
 
               : ListView.builder(
                   itemCount: vm.chats.length,
@@ -48,21 +41,32 @@ class _ChatsScreenState extends State<ChatsScreen> {
                     final chat = vm.chats[index];
 
                     return ListTile(
-                      leading: const CircleAvatar(
-                        backgroundImage: NetworkImage(
-                          "https://i.postimg.cc/g25VYN7X/user-1.png",
+                      leading: CircleAvatar(
+                        backgroundColor: Colors.green,
+                        child: Text(
+                          chat.profile.isNotEmpty
+                              ? chat.profile[0]
+                              : "?",
+                          style: const TextStyle(color: Colors.white),
                         ),
                       ),
 
                       title: Text(
-                        chat.message,
+                        chat.profile,
                         style: const TextStyle(
                           fontWeight: FontWeight.bold,
                         ),
                       ),
 
-                      subtitle: const Text("UTS Kelompok 6"),
-                      trailing: const Text("Now"),
+                      subtitle: Text(chat.message),
+
+                      trailing: Text(
+                        chat.time,
+                        style: const TextStyle(
+                          fontSize: 12,
+                          color: Colors.grey,
+                        ),
+                      ),
                     );
                   },
                 ),

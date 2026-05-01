@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 
-class AudioCallingScreen extends StatelessWidget {
-  const AudioCallingScreen({super.key});
+class VideoCallingScreen extends StatelessWidget {
+  const VideoCallingScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
       extendBodyBehindAppBar: true,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
@@ -20,25 +19,30 @@ class AudioCallingScreen extends StatelessWidget {
           child: Column(
             children: [
               const Spacer(),
-              const CircleAvatar(
-                radius: 50,
-                backgroundImage:
-                    NetworkImage("https://i.postimg.cc/xC2gTGx8/user-2.png"),
+              // Preview of my camera
+              Align(
+                alignment: Alignment.centerRight,
+                child: Container(
+                  margin: const EdgeInsets.all(16.0),
+                  height: 120,
+                  width: 96,
+                  decoration: const BoxDecoration(
+                    borderRadius: BorderRadius.all(Radius.circular(16.0)),
+                    boxShadow: [
+                      BoxShadow(
+                        offset: Offset(0, 24),
+                        blurRadius: 40,
+                        color: Colors.black38,
+                      ),
+                    ],
+                    image: DecorationImage(
+                      fit: BoxFit.cover,
+                      image: NetworkImage(
+                          "https://i.postimg.cc/0Q0n66Ff/call-bg.png"),
+                    ),
+                  ),
+                ),
               ),
-              const SizedBox(height: 16.0),
-              Text(
-                "Ralph Edwards",
-                style: Theme.of(context)
-                    .textTheme
-                    .titleMedium!
-                    .copyWith(color: Colors.white),
-              ),
-              const SizedBox(height: 16.0 / 2),
-              const Text(
-                "Ringing",
-                style: TextStyle(color: Colors.white70),
-              ),
-              const Spacer(),
               Padding(
                 padding: const EdgeInsets.symmetric(
                     horizontal: 16.0 * 2, vertical: 16.0),
@@ -54,9 +58,7 @@ class AudioCallingScreen extends StatelessWidget {
                       press: () {},
                     ),
                     CallOption(
-                      icon: const Icon(
-                        Icons.videocam_off,
-                      ),
+                      icon: const Icon(Icons.videocam_off),
                       press: () {},
                     ),
                     CallOption(
@@ -64,7 +66,7 @@ class AudioCallingScreen extends StatelessWidget {
                         Icons.call_end,
                         color: Colors.white,
                       ),
-                      color: Color(0xFFF03738),
+                      color: const Color(0xFFF03738),
                       press: () {},
                     ),
                   ],
@@ -80,11 +82,11 @@ class AudioCallingScreen extends StatelessWidget {
 
 class CallOption extends StatelessWidget {
   const CallOption({
-    Key? key,
+    super.key,
     required this.icon,
     required this.press,
     this.color = Colors.white10,
-  }) : super(key: key);
+  });
 
   final Icon icon;
   final VoidCallback press;
@@ -109,10 +111,10 @@ class CallOption extends StatelessWidget {
 
 class CallBg extends StatelessWidget {
   const CallBg({
-    Key? key,
+    super.key,
     required this.image,
     required this.child,
-  }) : super(key: key);
+  });
 
   final Widget image;
   final Widget child;
@@ -127,15 +129,21 @@ class CallBg extends StatelessWidget {
           width: double.infinity,
           height: double.infinity,
           decoration: const BoxDecoration(
-
+            gradient: LinearGradient(
+              colors: [
+                Color(0xFF1D1D35),
+                Colors.transparent,
+                Colors.transparent,
+                Color(0xFF1D1D35),
+              ],
+              stops: [0, 0.2, 0.5, 1],
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+            ),
           ),
         ),
         child,
       ],
     );
   }
-}
-
-class LinearGradient {
-  const LinearGradient({required List<Color> colors, required List<num> stops, required Alignment begin, required Alignment end});
 }

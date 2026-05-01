@@ -1,135 +1,89 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../viewmodels/chat_viewmodel.dart';
 
-class ChatScreen extends StatefulWidget {
-  const ChatScreen({super.key});
+class ChatsScreen extends StatefulWidget {
+  const ChatsScreen({super.key});
 
   @override
-  State<ChatScreen> createState() => _ChatScreenState();
+  State<ChatsScreen> createState() => _ChatsScreenState();
 }
 
-class _ChatScreenState extends State<ChatScreen> {
-  final TextEditingController _controller = TextEditingController();
-  final ScrollController _scrollController = ScrollController();
+class _ChatsScreenState extends State<ChatsScreen> {
 
-  List<Map<String, dynamic>> messages = [
-    {"text": "Hello!", "isMe": false},
-    {"text": "Hi, how are you?", "isMe": true},
-    {"text": "I'm fine, thanks!", "isMe": false},
-  ];
-
-  void _sendMessage() {
-    if (_controller.text.trim().isEmpty) return;
-
-    setState(() {
-      messages.add({
-        "text": _controller.text.trim(),
-        "isMe": true,
-      });
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() {
+      Provider.of<ChatViewModel>(context, listen: false).fetchChats();
     });
-
-    _controller.clear();
-
-    Future.delayed(const Duration(milliseconds: 100), () {
-      _scrollController.animateTo(
-        _scrollController.position.maxScrollExtent,
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeOut,
-      );
-    });
-  }
-
-  Widget _buildMessage(Map<String, dynamic> msg) {
-    final bool isMe = msg["isMe"];
-
-    return Align(
-      alignment: isMe ? Alignment.centerRight : Alignment.centerLeft,
-      child: Container(
-        margin: const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
-        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 14),
-        decoration: BoxDecoration(
-          color: isMe ? Colors.blue : Colors.grey.shade300,
-          borderRadius: BorderRadius.only(
-            topLeft: const Radius.circular(16),
-            topRight: const Radius.circular(16),
-            bottomLeft: Radius.circular(isMe ? 16 : 0),
-            bottomRight: Radius.circular(isMe ? 0 : 16),
-          ),
-        ),
-        child: Text(
-          msg["text"],
-          style: TextStyle(
-            color: isMe ? Colors.white : Colors.black87,
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildInputField() {
-    return SafeArea(
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          boxShadow: [
-            BoxShadow(
-              blurRadius: 5,
-              color: Colors.black12,
-            )
-          ],
-        ),
-        child: Row(
-          children: [
-            Expanded(
-              child: TextField(
-                controller: _controller,
-                decoration: InputDecoration(
-                  hintText: "Type a message...",
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(20),
-                    borderSide: BorderSide.none,
-                  ),
-                  fillColor: Colors.grey.shade200,
-                  filled: true,
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 16),
-                ),
-              ),
-            ),
-            const SizedBox(width: 8),
-            CircleAvatar(
-              backgroundColor: Colors.blue,
-              child: IconButton(
-                icon: const Icon(Icons.send, color: Colors.white),
-                onPressed: _sendMessage,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
   }
 
   @override
   Widget build(BuildContext context) {
+    final vm = context.watch<ChatViewModel>();
+
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
-        title: const Text("Chat"),
-        centerTitle: true,
+        backgroundColor: const Color(0xFF00BF6D),
+        title: const Text("Chats"),
       ),
-      body: Column(
-        children: [
-          Expanded(
-            child: ListView.builder(
-              controller: _scrollController,
-              itemCount: messages.length,
-              itemBuilder: (context, index) {
-                return _buildMessage(messages[index]);
-              },
-            ),
-          ),
-          _buildInputField(),
-        ],
-      ),
+
+      body: vm.isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : vm.chats.isEmpty
+              ? const Center(child: Text("Tidak ada chat"))
+              : ListView.builder(
+                  itemCount: vm.chats.length,
+                  itemBuilder: (context, index) {
+                    final chat = vm.chats[index];
+
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 16.0, vertical: 12),
+                      child: Row(
+                        children: [
+                          CircleAvatar(
+                            backgroundColor: Colors.green,
+                            child: Text(
+                              chat.profile.isNotEmpty
+                                  ? chat.profile[0]
+                                  : "?",
+                              style: const TextStyle(color: Colors.white),
+                            ),
+                          ),
+
+                          const SizedBox(width: 12),
+
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  chat.profile,
+                                  style: const TextStyle(
+                                      fontWeight: FontWeight.bold),
+                                ),
+                                const SizedBox(height: 5),
+                                Text(
+                                  chat.message,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ],
+                            ),
+                          ),
+
+                          Text(
+                            chat.time,
+                            style: const TextStyle(fontSize: 12),
+                          )
+                        ],
+                      ),
+                    );
+                  },
+                ),
     );
   }
 }
