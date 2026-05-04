@@ -42,17 +42,18 @@ class _ChatsScreenState extends State<ChatsScreen> {
 
                     return ListTile(
                       leading: CircleAvatar(
-                        backgroundColor: Colors.green,
+                        backgroundColor:
+                            chat.type == "sender"
+                                ? Colors.green
+                                : Colors.grey,
                         child: Text(
-                          chat.profile.isNotEmpty
-                              ? chat.profile[0]
-                              : "?",
+                          chat.type == "sender" ? "S" : "R",
                           style: const TextStyle(color: Colors.white),
                         ),
                       ),
 
                       title: Text(
-                        chat.profile,
+                        chat.type,
                         style: const TextStyle(
                           fontWeight: FontWeight.bold,
                         ),
@@ -61,7 +62,7 @@ class _ChatsScreenState extends State<ChatsScreen> {
                       subtitle: Text(chat.message),
 
                       trailing: Text(
-                        chat.time,
+                        chat.timestamp,
                         style: const TextStyle(
                           fontSize: 12,
                           color: Colors.grey,
