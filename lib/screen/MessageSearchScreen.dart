@@ -1,205 +1,79 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../viewmodels/chat_viewmodel.dart';
 
-class MessageSearchScreen extends StatelessWidget {
+class MessageSearchScreen extends StatefulWidget {
   const MessageSearchScreen({super.key});
 
   @override
+  State<MessageSearchScreen> createState() => _MessageSearchScreenState();
+}
+
+class _MessageSearchScreenState extends State<MessageSearchScreen> {
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() {
+      Provider.of<ChatViewModel>(context, listen: false).fetchChats();
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final vm = context.watch<ChatViewModel>();
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        centerTitle: false,
-        elevation: 0,
         backgroundColor: const Color(0xFF00BF6D),
-        foregroundColor: Colors.white,
-        title: const Text("Chats"),
+        title: const Text("Search Chats"),
       ),
       body: Column(
         children: [
-          // Appbar search
           Container(
-            padding: const EdgeInsets.fromLTRB(
-              16.0,
-              0,
-              16.0,
-              16.0,
-            ),
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
             color: const Color(0xFF00BF6D),
-            child: Form(
-              child: TextFormField(
-                autofocus: true,
-                textInputAction: TextInputAction.search,
-                onChanged: (value) {
-                  // search
-                },
-                decoration: InputDecoration(
-                  fillColor: Colors.white,
-                  prefixIcon: Icon(
-                    Icons.search,
-                    color: const Color(0xFF1D1D35).withOpacity(0.64),
-                  ),
-                  hintText: "Search",
-                  hintStyle: TextStyle(
-                    color: const Color(0xFF1D1D35).withOpacity(0.64),
-                  ),
-                  filled: true,
-                  contentPadding: const EdgeInsets.symmetric(
-                      horizontal: 16.0 * 1.5, vertical: 16.0),
-                  border: const OutlineInputBorder(
-                    borderSide: BorderSide.none,
-                    borderRadius: BorderRadius.all(Radius.circular(50)),
-                  ),
+            child: TextFormField(
+              decoration: const InputDecoration(
+                hintText: "Search",
+                filled: true,
+                fillColor: Colors.white,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(50)),
+                  borderSide: BorderSide.none,
                 ),
               ),
             ),
           ),
-          const Expanded(
-            child: SingleChildScrollView(
-              padding: EdgeInsets.symmetric(vertical: 16.0),
-              child: Column(
-                children: [
-                  RecentSearchContacts(),
-                  SizedBox(height: 16.0),
-                  // you can show suggested style for search result
-                  SuggestedContacts()
-                ],
-              ),
-            ),
+
+          Expanded(
+            child: vm.isLoading
+                ? const Center(child: CircularProgressIndicator())
+                : ListView.builder(
+                    itemCount: vm.chats.length,
+                    itemBuilder: (context, index) {
+                      final chat = vm.chats[index];
+
+                      return ListTile(
+                        leading: CircleAvatar(
+                          backgroundColor: Colors.green,
+                          child: Text(
+                            chat.profile.isNotEmpty
+                                ? chat.profile[0]
+                                : "?",
+                            style: const TextStyle(color: Colors.white),
+                          ),
+                        ),
+                        title: Text(chat.profile), // dari API
+                        subtitle: Text(chat.message), // dari API
+                        trailing: Text(chat.time), // dari API
+                      );
+                    },
+                  ),
           ),
         ],
       ),
     );
   }
 }
-
-class SuggestedContacts extends StatelessWidget {
-  const SuggestedContacts({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0),
-          child: Text(
-            "Suggested",
-            style: Theme.of(context).textTheme.titleSmall!.copyWith(
-                  color: Theme.of(context)
-                      .textTheme
-                      .titleSmall!
-                      .color!
-                      .withOpacity(0.32),
-                ),
-          ),
-        ),
-        const SizedBox(height: 16.0),
-        ...List.generate(
-          demoContactsImage.length,
-          (index) => ListTile(
-            contentPadding: const EdgeInsets.symmetric(
-                horizontal: 16.0, vertical: 16.0 / 2),
-            leading: CircleAvatar(
-              radius: 24,
-              backgroundImage: NetworkImage(demoContactsImage[index]),
-            ),
-            title: const Text("Jenny Wilson"),
-            onTap: () {},
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class RecentSearchContacts extends StatelessWidget {
-  const RecentSearchContacts({
-    super.key,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            "Recent search",
-            style: Theme.of(context).textTheme.titleSmall!.copyWith(
-                  color: Theme.of(context)
-                      .textTheme
-                      .titleSmall!
-                      .color!
-                      .withOpacity(0.32),
-                ),
-          ),
-          const SizedBox(height: 16.0),
-          SizedBox(
-            width: double.infinity,
-            height: 56,
-            child: Stack(
-              children: [
-                ...List.generate(
-                  demoContactsImage.length + 1,
-                  (index) => Positioned(
-                    left: index * 48,
-                    child: Container(
-                      decoration: BoxDecoration(
-                        border: Border.all(
-                            width: 4,
-                            color: Theme.of(context).scaffoldBackgroundColor),
-                        shape: BoxShape.circle,
-                      ),
-                      child: index < demoContactsImage.length
-                          ? CircleAvatar(
-                              radius: 26,
-                              backgroundImage:
-                                  NetworkImage(demoContactsImage[index]),
-                            )
-                          : const RoundedCounter(total: 35),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          )
-        ],
-      ),
-    );
-  }
-}
-
-class RoundedCounter extends StatelessWidget {
-  final int total;
-
-  const RoundedCounter({super.key, required this.total});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      height: 52,
-      width: 52,
-      decoration: BoxDecoration(
-        color: Theme.of(context).brightness == Brightness.dark
-            ? const Color(0xFF2E2F45)
-            : const Color(0xFFEBFAF3),
-        shape: BoxShape.circle,
-      ),
-      child: Center(
-        child: Text(
-          "$total+",
-          style: Theme.of(context).textTheme.titleMedium,
-        ),
-      ),
-    );
-  }
-}
-
-final List<String> demoContactsImage = [
-  'https://i.postimg.cc/g25VYN7X/user-1.png',
-  'https://i.postimg.cc/cCsYDjvj/user-2.png',
-  'https://i.postimg.cc/sXC5W1s3/user-3.png',
-  'https://i.postimg.cc/4dvVQZxV/user-4.png',
-  'https://i.postimg.cc/FzDSwZcK/user-5.png',
-];

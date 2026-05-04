@@ -1,30 +1,26 @@
 import 'package:flutter/material.dart';
-import '../models/chat_model.dart';
-import '../services/api_service.dart';
+import 'package:message_search_screen/models/chat_model.dart';
+import 'package:message_search_screen/services/api_service.dart';
 
 class ChatViewModel extends ChangeNotifier {
-  List<ChatModel> _chats = [];
-  bool _isLoading = false;
+  final ChatService _service = ChatService();
 
-  String _title = ""; // 🔥 dari API /check
+  List<ChatModel> chats = [];
+  bool isLoading = false;
 
-  List<ChatModel> get chats => _chats;
-  bool get isLoading => _isLoading;
-  String get title => _title;
-
-  Future<void> loadChats() async {
-    _isLoading = true;
+  Future<void> getChats() async {
+    isLoading = true;
     notifyListeners();
 
     try {
-      // 🔥 ambil data dari 2 API
-      _title = await ApiService.fetchTitle(); // /check
-      _chats = await ApiService.fetchChats(); // /chats
+      chats = await _service.fetchChats();
     } catch (e) {
-      debugPrint(e.toString());
+      print("ERROR: $e");
     }
 
-    _isLoading = false;
+    isLoading = false;
     notifyListeners();
   }
+
+  void fetchChats() {}
 }

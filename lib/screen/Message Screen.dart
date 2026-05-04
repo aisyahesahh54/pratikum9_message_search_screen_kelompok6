@@ -452,9 +452,7 @@ class MessageStatusDot extends StatelessWidget {
           return Theme.of(context).textTheme.bodyLarge!.color!.withOpacity(0.1);
         case MessageStatus.viewed:
           return const Color(0xFF00BF6D);
-        default:
-          return Colors.transparent;
-      }
+        }
     }
 
     return Container(
