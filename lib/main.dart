@@ -1,14 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:message_search_screen/viewmodels/chat_viewmodel.dart';
-import 'package:message_search_screen/views/chatsScreen.dart';
 import 'package:provider/provider.dart';
+import 'viewmodels/chat_view_model.dart';
+import 'views/chat_screen.dart';
 
 void main() {
   runApp(
-    MultiProvider(
-      providers: [
-        ChangeNotifierProvider(create: (_) => ChatViewModel()),
-      ],
+    ChangeNotifierProvider(
+      create: (_) => ChatViewModel(),
       child: const MyApp(),
     ),
   );
@@ -19,8 +17,9 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: ChatsScreen(),
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: ChatScreen(),
     );
   }
 }
