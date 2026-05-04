@@ -1,30 +1,25 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import '../models/chat_model.dart';
+import 'package:message_search_screen/models/chat_model.dart';
 
-class ApiService {
-  final String baseUrl = "https://api.ppb.widiarrohman.my.id/api/2026/uts/B/kelompok6";
+class ChatService {
+  final String baseUrl =
+      "https://api.ppb.widiarrohman.my.id/api/2026/uts/B/kelompok6/chats";
 
-  Future<List<ChatModel>> getChats() async {
-    try {
-      final response = await http.get(
-        Uri.parse('$baseUrl/chats'), // ✅ FIX: pakai "chats"
-      );
+  Future<List<ChatModel>> fetchChats() async {
+    final response = await http.get(Uri.parse(baseUrl));
 
-      if (response.statusCode == 200) {
-        final data = json.decode(response.body);
+    print("STATUS: ${response.statusCode}");
+    print("BODY: ${response.body}");
 
-        // ✅ Pastikan data adalah list
-        final List<dynamic> chatsJson = data['data'];
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
 
-        return chatsJson
-            .map((json) => ChatModel.fromJson(json))
-            .toList();
-      } else {
-        throw Exception('Failed to load chats: ${response.statusCode}');
-      }
-    } catch (e) {
-      throw Exception('Error: $e');
+      List chats = data['data'];
+
+      return chats.map((e) => ChatModel.fromJson(e)).toList();
+    } else {
+      throw Exception("Gagal ambil data API");
     }
   }
 }
