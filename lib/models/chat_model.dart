@@ -1,19 +1,19 @@
 class ChatModel {
-  final String profile;
   final String message;
-  final String time;
+  final String type;
+  final String timestamp;
 
   ChatModel({
-    required this.profile,
     required this.message,
-    required this.time,
+    required this.type,
+    required this.timestamp,
   });
 
   factory ChatModel.fromJson(Map<String, dynamic> json) {
     return ChatModel(
-      profile: json['profile'] ?? '',
       message: json['message'] ?? '',
-      time: json['time'] ?? '',
+      type: json['type'] ?? '',
+      timestamp: json['timestamp'] ?? '',
     );
   }
 }
