@@ -1,13 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:message_search_screen/views/profile_screen.dart';
 import 'package:provider/provider.dart';
-import 'viewmodels/chat_viewmodel.dart';
-import 'views/Chat_Screen.dart';
-import '../models/chat_model.dart';
-
-
+import 'viewmodels/profile_viewmodel.dart';
+import 'views/profile_screen.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => ProfileViewModel()),
+      ],
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -15,23 +20,8 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MultiProvider(
-      providers: [
-        ChangeNotifierProvider(create: (_) => ChatViewModel()),
-      ],
-      child: MaterialApp(
-        debugShowCheckedModeBanner: false,
-
-        // 🔥 Tambahan biar tampilan hijau konsisten
-        theme: ThemeData(
-          appBarTheme: const AppBarTheme(
-            backgroundColor: Colors.green,
-            foregroundColor: Colors.white,
-          ),
-        ),
-
-        home: const ChatScreen(),
-      ),
+    return MaterialApp(
+      home: const ProfileScreen(),
     );
   }
 }
