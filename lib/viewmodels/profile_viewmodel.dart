@@ -5,15 +5,19 @@ import '../services/api_service.dart';
 class ProfileViewModel extends ChangeNotifier {
   ProfileModel? profile;
   bool isLoading = false;
+  String status = "";
 
-  Future<void> getProfile() async {
+  String? get statusTest => null;
+
+  Future<void> fetchProfile() async {
     isLoading = true;
     notifyListeners();
 
     try {
-      profile = await ApiService.fetchProfile();
+      profile = await ApiService.getProfile();
+      status = "UTS Kelas B - Kelompok 6, test pakai API berhasil ✅";
     } catch (e) {
-      print("ERROR: $e");
+      status = "API gagal ❌";
     }
 
     isLoading = false;
