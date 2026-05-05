@@ -1,19 +1,25 @@
 class ChatModel {
+  final String name;
   final String message;
-  final String type;
-  final String timestamp;
+  final String time;
+  final String avatar;
+  final bool isActive;
 
   ChatModel({
+    required this.name,
     required this.message,
-    required this.type,
-    required this.timestamp,
+    required this.time,
+    required this.avatar,
+    required this.isActive,
   });
 
   factory ChatModel.fromJson(Map<String, dynamic> json) {
     return ChatModel(
-      message: json['message'] ?? '',
-      type: json['type'] ?? '',
-      timestamp: json['timestamp'] ?? '',
+      name: json['name'],
+      message: json['message'],
+      time: json['time'],
+      avatar: json['avatar'],
+      isActive: json['isActive'],
     );
   }
 }
