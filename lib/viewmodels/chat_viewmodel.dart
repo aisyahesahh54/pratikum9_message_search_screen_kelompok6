@@ -1,26 +1,28 @@
 import 'package:flutter/material.dart';
-import 'package:message_search_screen/models/chat_model.dart';
-import 'package:message_search_screen/services/api_service.dart';
+import '../services/api_service.dart';
 
 class ChatViewModel extends ChangeNotifier {
-  final ChatService _service = ChatService();
-
-  List<ChatModel> chats = [];
+  String message = "";
   bool isLoading = false;
+   bool _isFetched = false; 
 
-  Future<void> getChats() async {
+  Future<void> fetchChats() async {
+
+    print("FETCH DIPANGGIL"); // 
+
     isLoading = true;
     notifyListeners();
 
     try {
-      chats = await _service.fetchChats();
+      message = await ApiService.fetchMessage();
+
+      print("DATA API: $message"); // 
     } catch (e) {
+      message = "Error: $e";
       print("ERROR: $e");
     }
 
     isLoading = false;
     notifyListeners();
   }
-
-  void fetchChats() {}
 }
