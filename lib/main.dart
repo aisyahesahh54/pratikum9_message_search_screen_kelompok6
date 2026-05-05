@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:message_search_screen/views/profile_screen.dart';
+import 'package:message_search_screen/viewmodels/profile_viewmodel.dart';
 import 'package:provider/provider.dart';
-import 'viewmodels/profile_viewmodel.dart';
-import 'views/profile_screen.dart';
+import 'home_page.dart';
+
 
 void main() {
   runApp(
@@ -10,18 +10,9 @@ void main() {
       providers: [
         ChangeNotifierProvider(create: (_) => ProfileViewModel()),
       ],
-      child: const MyApp(),
+      child: const MaterialApp(
+        home: HomePage(),
+      ),
     ),
   );
-}
-
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      home: const ProfileScreen(),
-    );
-  }
 }
