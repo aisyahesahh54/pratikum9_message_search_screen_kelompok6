@@ -1,27 +1,25 @@
-class ChatModel {
-  final String name;
-  final String message;
-  final String time;
-  final String avatar;
-  final bool isActive;
+class ProfileModel {
+  final String userId;
+  final String location;
+  final String phone;
+  final String email;
+  final String profilePicture;
 
-  ChatModel({
-    required this.name,
-    required this.message,
-    required this.time,
-    required this.avatar,
-    required this.isActive,
+  ProfileModel({
+    required this.userId,
+    required this.location,
+    required this.phone,
+    required this.email,
+    required this.profilePicture,
   });
 
-  factory ChatModel.fromJson(Map<String, dynamic> json) {
-    final profileName = json['profile'] ?? '';
-
-    return ChatModel(
-      name: profileName,
-      message: json['message'] ?? '',
-      time: json['time'] ?? '',
-      avatar: "https://i.pravatar.cc/150?u=$profileName",
-      isActive: false,
+  factory ProfileModel.fromJson(Map<String, dynamic> json) {
+    return ProfileModel(
+      userId: json['user_id'],
+      location: json['location'],
+      phone: json['phone'],
+      email: json['email'],
+      profilePicture: json['profile_picture'],
     );
   }
 }
