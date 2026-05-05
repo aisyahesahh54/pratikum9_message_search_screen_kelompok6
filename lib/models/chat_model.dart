@@ -14,12 +14,14 @@ class ChatModel {
   });
 
   factory ChatModel.fromJson(Map<String, dynamic> json) {
+    final profileName = json['profile'] ?? '';
+
     return ChatModel(
-      name: json['name'],
-      message: json['message'],
-      time: json['time'],
-      avatar: json['avatar'],
-      isActive: json['isActive'],
+      name: profileName,
+      message: json['message'] ?? '',
+      time: json['time'] ?? '',
+      avatar: "https://i.pravatar.cc/150?u=$profileName",
+      isActive: false,
     );
   }
 }
