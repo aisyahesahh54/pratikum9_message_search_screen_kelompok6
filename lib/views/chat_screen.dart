@@ -1,20 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../viewmodels/chat_view_model.dart';
+import '../viewmodels/chat_viewmodel.dart';
 
 class ChatScreen extends StatefulWidget {
-  const ChatScreen({super.key});
+  const ChatScreen({Key? key}) : super(key: key);
 
   @override
   State<ChatScreen> createState() => _ChatScreenState();
 }
 
 class _ChatScreenState extends State<ChatScreen> {
+
   @override
   void initState() {
     super.initState();
-    Future.microtask(() =>
-        Provider.of<ChatViewModel>(context, listen: false).fetchChat());
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<ChatViewModel>(context, listen: false).fetchChats();
+    });
   }
 
   @override
@@ -23,52 +26,43 @@ class _ChatScreenState extends State<ChatScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Chat"),
         backgroundColor: Colors.green,
-      ),
-      backgroundColor: Colors.grey[200],
+        toolbarHeight: 80,
 
-      body: vm.isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : ListView.builder(
-              padding: const EdgeInsets.all(10),
-              itemCount: vm.chats.length,
-              itemBuilder: (context, index) {
-                final chat = vm.chats[index];
-                final isSender = chat.type == "sender";
+        title: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
 
-                return Align(
-                  alignment:
-                      isSender ? Alignment.centerRight : Alignment.centerLeft,
-                  child: Container(
-                    margin: const EdgeInsets.symmetric(vertical: 5),
-                    padding: const EdgeInsets.all(12),
-                    constraints: BoxConstraints(
-                      maxWidth: MediaQuery.of(context).size.width * 0.7,
-                    ),
-                    decoration: BoxDecoration(
-                      color: isSender
-                          ? Colors.green[300]
-                          : Colors.white,
-                      borderRadius: BorderRadius.only(
-                        topLeft: const Radius.circular(15),
-                        topRight: const Radius.circular(15),
-                        bottomLeft:
-                            Radius.circular(isSender ? 15 : 0),
-                        bottomRight:
-                            Radius.circular(isSender ? 0 : 15),
-                      ),
-                    ),
-                    child: Text(
-                      chat.message,
-                      style: TextStyle(
-                        color: isSender ? Colors.white : Colors.black,
-                      ),
+            const Text(
+              "Chats",
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+
+            const SizedBox(height: 4),
+
+            vm.isLoading
+                ? const Text(
+                    "Loading...",
+                    style: TextStyle(color: Colors.white70, fontSize: 14),
+                  )
+                : Text(
+                    vm.message.isNotEmpty ? vm.message : "Tidak ada data",
+                    style: const TextStyle(
+                      color: Colors.white70,
+                      fontSize: 14,
                     ),
                   ),
-                );
-              },
-            ),
+          ],
+        ),
+      ),
+
+    
+      body: const SizedBox(),
     );
   }
 }
